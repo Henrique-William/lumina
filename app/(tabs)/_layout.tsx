@@ -21,7 +21,7 @@ export default function TabLayout() {
           height: 84,
           position: "absolute",
           marginBottom: 12,
-          marginVertical: 12,
+          marginHorizontal: 12,
           bottom: 0,
           backgroundColor: "#F5F5FA",
           flexDirection: "row",

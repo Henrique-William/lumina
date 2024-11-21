@@ -14,16 +14,16 @@ import socket from "@/services/socket";
 const SOS: React.FC = () => {
   const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('Conectado ao servidor Socket.io');
-    });
+  // useEffect(() => {
+  //   socket.on('connect', () => {
+  //     console.log('Conectado ao servidor Socket.io');
+  //   });
 
-    // Limpar conexões ao desmontar o componente
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+  //   // Limpar conexões ao desmontar o componente
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   // Função para ser chamada após 3 segundos de pressão
   const handleLongPressAction = () => {
