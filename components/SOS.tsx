@@ -27,8 +27,9 @@ const SOS: React.FC = () => {
 
   // Função para ser chamada após 3 segundos de pressão
   const handleLongPressAction = () => {
-    socket.emit('queue', { message: 'Você entrou na fila' });
+    // socket.emit('queue', { message: 'Você entrou na fila' });
     Alert.alert("SOS Enviado", "Sua solicitação foi enviada ao servidor.");
+    console.log("SOS Enviado", "Sua solicitação foi enviada ao servidor.");
   };
 
   const handlePressIn = (event: GestureResponderEvent) => {
@@ -69,6 +70,7 @@ const SOS: React.FC = () => {
             onPressOut={handlePressOut}
           >
             <Text style={styles.sosText}>SOS</Text>
+            <Text style={styles.sosSubtitle}>Pressione por 3 segundos</Text>
           </Pressable>
         </LinearGradient>
       </LinearGradient>
@@ -110,6 +112,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "InterBold",
     fontSize: 38,
+    userSelect: "none" as const,
+  },
+  sosSubtitle: {
+    fontFamily: 'Inter',
+    color: '#fff',
     userSelect: "none" as const,
   },
   btnContainer: {},
