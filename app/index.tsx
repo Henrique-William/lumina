@@ -12,6 +12,7 @@ import SubmitButton from "@/components/SubmitButton";
 import Fields from "@/components/Fields";
 import { Login } from "@/services/userServices";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function index() {
   const [email, setEmail] = useState("");
@@ -21,11 +22,18 @@ export default function index() {
   const handleLogin = async () => {
     try {
       const response = await Login(email, password);
-      router.push("/(tabs)");
-      // Salvando o token no localStorage
-      localStorage.setItem("token", response.token);
-    } catch (error) {
-      alert("Credenciais inválidas :(");
+
+      if (response.token) {
+        // Armazenar o token no AsyncStorage
+        await AsyncStorage.setItem("token", response.token);
+        await AsyncStorage.setItem("email", email);
+        router.push("/(tabs)");
+      } else {
+        alert("Token não retornado pelo servidor.");
+      }
+    } catch (error: any) {
+      console.error("Erro no Login:", error);
+      alert(error.message || "Credenciais inválidas :(");
     }
   };
 
@@ -56,7 +64,7 @@ export default function index() {
         />
 
         <Text style={styles.forgotPass}>
-          <Link href={"/ForgotPassword"}>Esqueçeu a senha?</Link>
+          <Link href="/forgotPassword">Esqueçeu a senha?</Link>
         </Text>
 
         <SubmitButton name="Login" onPress={handleLogin} />
@@ -85,7 +93,7 @@ export default function index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: "column",
     backgroundColor: "#fff",
   },
   header: {
@@ -102,7 +110,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontFamily: 'InterBold',
+    fontFamily: "InterBold",
     marginBottom: 16,
     textAlign: "left",
     color: "#3C3D37",

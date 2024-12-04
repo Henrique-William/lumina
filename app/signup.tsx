@@ -1,19 +1,22 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Image, ScrollView } from "react-native";
-import { Link } from "expo-router";
+import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
+import { Link, useRouter } from "expo-router";
 import Fields from "../components/Fields";
 import SubmitButton from "../components/SubmitButton";
 import { Register } from "@/services/userServices";
+import SwitchExample from "@/components/Switch";
 
 export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [userType, setUserType] = useState("Client");
+  const router = useRouter();
 
   const handleSignup = async () => {
     // Validações simples
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword || !userType) {
       alert("Por favor, preencha todos os campos");
       return;
     }
@@ -23,11 +26,10 @@ export default function SignUp() {
       return;
     }
     try {
-      const response = await Register(email, password, name);
-      console.log("Usuário criado com sucesso:", response);
-    } catch {
-
-    }
+      const response = await Register(email, password, name, userType);
+      alert("Usuário criado com sucesso");
+      router.push("/signin");
+    } catch {}
   };
 
   return (
@@ -69,11 +71,13 @@ export default function SignUp() {
           secure={true}
         />
 
-        <Text style={styles.terms}>
+        <SwitchExample />
+
+        {/* <Text style={styles.terms}>
           Cadastrando, você estará de acordo com nossos{" "}
           <Text style={styles.termsLink}>Termos & Condições</Text> e{" "}
           <Text style={styles.termsLink}>Política de Privacidade</Text>
-        </Text>
+        </Text> */}
 
         <SubmitButton name="Cadastrar" onPress={handleSignup} />
 
@@ -99,6 +103,7 @@ const styles = StyleSheet.create({
     height: "40%",
     justifyContent: "center",
     alignItems: "center",
+    bottom: 24,
   },
   imageHeader: {
     height: 250,
@@ -108,7 +113,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontFamily: 'InterBold',
+    fontFamily: "InterBold",
     marginBottom: 16,
     textAlign: "left",
     color: "#3C3D37",

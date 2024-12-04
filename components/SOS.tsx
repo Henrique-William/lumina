@@ -8,29 +8,34 @@ import {
   Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import socket from "@/services/socket";
+import { io } from 'socket.io-client';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const socket = io('http://192.168.1.60:3000');
 
 const SOS: React.FC = () => {
   const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
 
-  // useEffect(() => {
-  //   socket.on('connect', () => {
-  //     console.log('Conectado ao servidor Socket.io');
-  //   });
-
-  //   // Limpar conexões ao desmontar o componente
-  //   return () => {
-  //     socket.disconnect();
-  //   };
-  // }, []);
-
   // Função para ser chamada após 3 segundos de pressão
-  const handleLongPressAction = () => {
-    // socket.emit('queue', { message: 'Você entrou na fila' });
-    Alert.alert("SOS Enviado", "Sua solicitação foi enviada ao servidor.");
-    console.log("SOS Enviado", "Sua solicitação foi enviada ao servidor.");
-  };
+  // ClientScreen.tsx - Melhorias na Verificação de Erros
+
+const handleLongPressAction = async() => {
+  try {
+    const userID = await AsyncStorage.getItem("user");
+    if (userID) {
+      socket.emit('join_client_queue', userID);
+      Alert.alert('Fila', 'Você entrou na fila de atendimento.');
+      console.log("SOS Enviado", "Sua solicitação foi enviada ao servidor.");
+      
+    } else {
+      Alert.alert("Erro", "Não foi possível recuperar o ID do usuário.");
+    }
+  } catch (error) {
+    Alert.alert("Erro", "Erro ao acessar o armazenamento local.");
+    console.error("Erro ao acessar AsyncStorage:", error);
+  }
+};
+
 
   const handlePressIn = (event: GestureResponderEvent) => {
     const timer = setTimeout(handleLongPressAction, 3000); // 3 segundos
